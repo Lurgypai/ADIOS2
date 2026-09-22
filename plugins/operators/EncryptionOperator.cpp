@@ -13,6 +13,8 @@
 #include <string>
 #include <string_view>
 #include <chrono>
+#include <iostream>
+#include <string>
 
 #include <sodium.h>
 
@@ -130,9 +132,9 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
     const auto skHex = m_Parameters.find("secretkey");
     const auto modeIt = m_Parameters.find("mode");
 
-    const auto rank = m_parameters.find("DEBUG_rank");
-    if(rank != m_parameters.end()) {
-        DEBUG_rank = std::stoi(rank);
+    const auto rank = m_Parameters.find("DEBUG_rank");
+    if(rank != m_Parameters.end()) {
+        DEBUG_rank = std::stoi(rank->second);
     }
     else {
         DEBUG_rank = -1;
@@ -209,7 +211,7 @@ size_t
 EncryptionOperator::Operate(const char *dataIn, const Dims &blockStart, const Dims &blockCount,
                             const DataType type, char *bufferOut)
 {
-    auto now = std::chrono::steady_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
     size_t offset = 0;
     const size_t sizeIn = GetTotalSize(blockCount, GetDataTypeSize(type));
@@ -274,7 +276,7 @@ __attribute__((no_sanitize("memory")))
 size_t
 EncryptionOperator::InverseOperate(const char *bufferIn, const size_t sizeIn, char *dataOut)
 {
-    auto now = std::chrono::steady_clock::now();
+    auto start = std::chrono::steady_clock::now();
 
     size_t offset = 0;
     const size_t dataBytes = GetParameter<size_t>(bufferIn, offset);
@@ -325,7 +327,10 @@ EncryptionOperator::InverseOperate(const char *bufferIn, const size_t sizeIn, ch
 
     if(DEBUG_rank == 0) {
         std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
-        std::cout << "decryption_time: " << elapsed_seconds.count() << std::endl;
+        static double total_elapsed = 0.0;
+        total_elapsed += elapsed_seconds.count();
+        std::cout << "encryption_time, " << elapsed_seconds.count() << '\n';
+        std::cout << "total_elapsed, " << total_elapsed << std::endl;
 
     }
 
