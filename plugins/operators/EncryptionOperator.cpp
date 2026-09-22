@@ -257,8 +257,10 @@ EncryptionOperator::Operate(const char *dataIn, const Dims &blockStart, const Di
 
     if(DEBUG_rank == 0) {
         std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
-        std::cout << "encryption_time: " << elapsed_seconds.count() << std::endl;
-
+        static double total_elapsed = 0.0;
+        total_elapsed += elapsed_seconds.count();
+        std::cout << "encryption_time, " << elapsed_seconds.count() << '\n';
+        std::cout << "total_elapsed, " << total_elapsed << std::endl;
     }
 
     return offset;
