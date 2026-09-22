@@ -53,6 +53,8 @@ public:
 private:
     struct EncryptImpl;
     std::unique_ptr<EncryptImpl> Impl;
+
+    int DEBUG_rank;
 };
 
 } // end namespace plugin
