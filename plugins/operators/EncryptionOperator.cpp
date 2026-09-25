@@ -132,11 +132,12 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
     const auto skHex = m_Parameters.find("secretkey");
     const auto modeIt = m_Parameters.find("mode");
 
-    const auto rank = m_Parameters.find("DEBUG_rank");
+    const auto rank = m_Parameters.find("debug_rank");
     if(rank != m_Parameters.end()) {
         DEBUG_rank = std::stoi(rank->second);
     }
     else {
+        std::cout << "DEBUG: Missing rank, using default value (-1)" << std::endl;
         DEBUG_rank = -1;
     }
 
