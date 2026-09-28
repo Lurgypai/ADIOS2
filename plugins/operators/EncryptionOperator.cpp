@@ -114,7 +114,7 @@ struct EncryptionOperator::EncryptImpl
 };
 
 EncryptionOperator::EncryptionOperator(const Params &parameters)
-: PluginOperatorInterface(parameters), Impl(new EncryptImpl)
+: PluginOperatorInterface{parameters}, Impl{new EncryptImpl}
 {
     if (sodium_init() < 0)
         throw std::runtime_error("EncryptionOperator: libsodium initialization failed");
@@ -140,6 +140,8 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
         std::cout << "DEBUG: Missing rank, using default value (-1)" << std::endl;
         DEBUG_rank = -1;
     }
+    DEBUG_enc_elapsed = 0.0;
+    DEBUG_dec_elapsed = 0.0;
 
     const bool hasAsymEnv = envPKFile || envPKHex || envASKFile || envASKHex;
     const bool isAsymmetric = hasAsymEnv || pkFile != end || pkHex != end ||
@@ -201,7 +203,10 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
     }
 }
 
-EncryptionOperator::~EncryptionOperator() {}
+EncryptionOperator::~EncryptionOperator() {
+    std::cout << "DEBUG_enc_elapsed: " << DEBUG_enc_elapsed << '\n';
+    std::cout << "DEBUG_dec_elapsed: " << DEBUG_dec_elapsed << std::endl;
+}
 
 #if defined(__clang__)
 #if __has_feature(memory_sanitizer)
@@ -260,10 +265,7 @@ EncryptionOperator::Operate(const char *dataIn, const Dims &blockStart, const Di
 
     if(DEBUG_rank == 0) {
         std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
-        static double total_elapsed = 0.0;
-        total_elapsed += elapsed_seconds.count();
-        std::cout << "encryption_time, " << elapsed_seconds.count() << '\n';
-        std::cout << "total_elapsed, " << total_elapsed << std::endl;
+        DEBUG_enc_elapsed += elapsed_seconds.count();
     }
 
     return offset;
@@ -328,10 +330,7 @@ EncryptionOperator::InverseOperate(const char *bufferIn, const size_t sizeIn, ch
 
     if(DEBUG_rank == 0) {
         std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
-        static double total_elapsed = 0.0;
-        total_elapsed += elapsed_seconds.count();
-        std::cout << "encryption_time, " << elapsed_seconds.count() << '\n';
-        std::cout << "total_elapsed, " << total_elapsed << std::endl;
+        DEBUG_dec_elapsed += elapsed_seconds.count();
 
     }
 

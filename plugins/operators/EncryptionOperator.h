@@ -55,6 +55,8 @@ private:
     std::unique_ptr<EncryptImpl> Impl;
 
     int DEBUG_rank;
+    double DEBUG_enc_elapsed;
+    double DEBUG_dec_elapsed;
 };
 
 } // end namespace plugin
