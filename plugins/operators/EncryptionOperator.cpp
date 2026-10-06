@@ -135,6 +135,7 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
     const auto rank = m_Parameters.find("debug_rank");
     if(rank != m_Parameters.end()) {
         DEBUG_rank = std::stoi(rank->second);
+        // std::cout << "Rank received in the encryption operator: " << DEBUG_rank << std::endl;
     }
     else {
         std::cout << "DEBUG: Missing rank, using default value (-1)" << std::endl;
@@ -204,8 +205,11 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
 }
 
 EncryptionOperator::~EncryptionOperator() {
-    std::cout << "DEBUG_enc_elapsed: " << DEBUG_enc_elapsed << '\n';
-    std::cout << "DEBUG_dec_elapsed: " << DEBUG_dec_elapsed << std::endl;
+    if(DEBUG_rank == 0) {
+        std::cout << "DEBUG_enc_elapsed: " << DEBUG_enc_elapsed << '\n';
+        std::cout << "DEBUG_dec_elapsed: " << DEBUG_dec_elapsed << std::endl;
+    }
+
 }
 
 #if defined(__clang__)
