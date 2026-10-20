@@ -206,8 +206,10 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
 
 EncryptionOperator::~EncryptionOperator() {
     if(DEBUG_rank == 0) {
-        std::cout << "DEBUG_enc_elapsed: " << DEBUG_enc_elapsed << '\n';
-        std::cout << "DEBUG_dec_elapsed: " << DEBUG_dec_elapsed << std::endl;
+        // std::cout << "DEBUG_enc_elapsed: " << DEBUG_enc_elapsed << '\n';
+        // std::cout << "DEBUG_dec_elapsed: " << DEBUG_dec_elapsed << std::endl;
+        std::ofstream file{std::to_string(DEBUG_rank) + "-enc_times.txt"};
+        file << DEBUG_enc_elapsed << ", " << DEBUG_dec_elapsed << std::endl;
     }
 
 }
