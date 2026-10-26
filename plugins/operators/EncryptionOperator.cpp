@@ -205,8 +205,17 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
 }
 
 EncryptionOperator::~EncryptionOperator() {
-        // std::ofstream file{std::to_string(DEBUG_rank) + "-enc_times.txt"};
-        // file << DEBUG_enc_elapsed << ", " << DEBUG_dec_elapsed << std::endl;
+    // Source - https://stackoverflow.com/a/26343947
+    // Posted by Ruslan Guseinov, modified by community. See post 'Timeline' for change history
+    // Retrieved 2026-10-20, License - CC BY-SA 4.0
+    
+    std::string old_str = std::to_string(DEBUG_rank);
+    size_t n_zero = 3;
+    auto rankNo = std::string(n_zero - std::min(n_zero, old_str.length()), '0') + old_str;
+    std::string filename{rankNo + "-enc_times.txt"};
+    std::ofstream file{filename, std::ios_base::app | std::ios_base::out};
+
+    file << DEBUG_enc_elapsed << ", " << DEBUG_dec_elapsed << std::endl;
 }
 
 #if defined(__clang__)
