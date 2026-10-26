@@ -205,13 +205,8 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
 }
 
 EncryptionOperator::~EncryptionOperator() {
-    if(DEBUG_rank == 0) {
-        // std::cout << "DEBUG_enc_elapsed: " << DEBUG_enc_elapsed << '\n';
-        // std::cout << "DEBUG_dec_elapsed: " << DEBUG_dec_elapsed << std::endl;
-        std::ofstream file{std::to_string(DEBUG_rank) + "-enc_times.txt"};
-        file << DEBUG_enc_elapsed << ", " << DEBUG_dec_elapsed << std::endl;
-    }
-
+        // std::ofstream file{std::to_string(DEBUG_rank) + "-enc_times.txt"};
+        // file << DEBUG_enc_elapsed << ", " << DEBUG_dec_elapsed << std::endl;
 }
 
 #if defined(__clang__)
@@ -269,10 +264,8 @@ EncryptionOperator::Operate(const char *dataIn, const Dims &blockStart, const Di
         offset += sizeIn + crypto_secretbox_MACBYTES;
     }
 
-    if(DEBUG_rank == 0) {
-        std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
-        DEBUG_enc_elapsed += elapsed_seconds.count();
-    }
+    std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
+    DEBUG_enc_elapsed += elapsed_seconds.count();
 
     return offset;
 }
@@ -334,11 +327,8 @@ EncryptionOperator::InverseOperate(const char *bufferIn, const size_t sizeIn, ch
             throw std::runtime_error("message forged!");
     }
 
-    if(DEBUG_rank == 0) {
-        std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
-        DEBUG_dec_elapsed += elapsed_seconds.count();
-
-    }
+    std::chrono::duration<double> elapsed_seconds = std::chrono::steady_clock::now() - start;
+    DEBUG_dec_elapsed += elapsed_seconds.count();
 
     return dataBytes;
 }
