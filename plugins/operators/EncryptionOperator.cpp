@@ -132,7 +132,9 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
     const auto skHex = m_Parameters.find("secretkey");
     const auto modeIt = m_Parameters.find("mode");
 
+    // debug params
     const auto rank = m_Parameters.find("debug_rank");
+    const auto debugMode = m_Parameters.find("debug_mode");
     if(rank != m_Parameters.end()) {
         DEBUG_rank = std::stoi(rank->second);
         // std::cout << "Rank received in the encryption operator: " << DEBUG_rank << std::endl;
@@ -140,6 +142,21 @@ EncryptionOperator::EncryptionOperator(const Params &parameters)
     else {
         std::cout << "DEBUG: Missing rank, using default value (-1)" << std::endl;
         DEBUG_rank = -1;
+    }
+
+    if(debugMode != m_Parameters.end()) {
+        if(debugMode->second == "dec") {
+            DEBUG_mode = "dec";
+        }
+        else if (debugMode->second == "enc") {
+            DEBUG_mode = "enc";
+        }
+        else {
+            DEBUG_mode = "none";
+        }
+    }
+    else {
+        DEBUG_mode = "none";
     }
     DEBUG_enc_elapsed = 0.0;
     DEBUG_dec_elapsed = 0.0;
@@ -215,7 +232,17 @@ EncryptionOperator::~EncryptionOperator() {
     std::string filename{rankNo + "-enc_times.txt"};
     std::ofstream file{filename, std::ios_base::app | std::ios_base::out};
 
-    file << DEBUG_enc_elapsed << ", " << DEBUG_dec_elapsed << std::endl;
+    double outVal = 0.0;
+    if(DEBUG_mode == "enc") {
+        outVal = DEBUG_enc_elapsed;
+    }
+    else if(DEBUG_mode == "dec") {
+        outVal = DEBUG_dec_elapsed;
+    }
+
+    if(DEBUG_mode != "none") {
+        file << DEBUG_mode << ", " << outVal << std::endl;
+    }
 }
 
 #if defined(__clang__)
